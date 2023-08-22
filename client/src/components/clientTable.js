@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 
-
-function ClientTable({ 
-  toggleClient, expandedClient, paymentData, paymentDate, isPaymentDataEmpty, isPaymentDateEmpty, setPaymentData, setPaymentDate, submitPayment, clientData, handleDelete 
+const ClientTable = React.memo(function ClientTable({
+  toggleClient,
+  expandedClient,
+  paymentData,
+  paymentDate,
+  isPaymentDataEmpty,
+  isPaymentDateEmpty,
+  setPaymentData,
+  setPaymentDate,
+  submitPayment,
+  clientData,
+  handleDelete
 }) {
-  
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredClients = Object.keys(clientData).filter((clientName) =>
     clientName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
   return (
     <div className="clients-table">
-
       <div className="input-container" id="clientSearch">
         <input
           className="input-field"
@@ -45,36 +51,48 @@ function ClientTable({
             <table className="stock-table">
               <thead>
                 <tr>
-                <td colSpan="2">
-                <div className="input-container">
-                    <input
-                      type="date"
-                      className={`input-field ${isPaymentDateEmpty ? 'input-field-red' : ''}`}
-                      value={paymentDate}
-                      onChange={(e) => setPaymentDate(e.target.value)}
-                    />
-                    </div>
-                    {isPaymentDateEmpty ? (
-                    <div className="error-message">Date can't be empty</div>
-                    ) : null}
-                    </td>
                   <td colSpan="2">
                     <div className="input-container">
-                    <input
-                      className={`input-field ${isPaymentDataEmpty ? 'input-field-red' : ''}`}
-                      type="text"
-                      value={paymentData}
-                      onChange={(e) => setPaymentData(e.target.value)}
-                      onInput={(e) => {e.target.value = e.target.value.replace(/[^0-9.]/g, '');}}
-                      placeholder={isPaymentDataEmpty ? "Payment Amount" : "Payment Amount"}
-                    />
+                      <input
+                        className={`input-field ${
+                          isPaymentDataEmpty ? "input-field-red" : ""
+                        }`}
+                        type="text"
+                        value={paymentData}
+                        onChange={(e) => setPaymentData(e.target.value)}
+                        onInput={(e) => {
+                          e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+                        }}
+                        placeholder={
+                          isPaymentDataEmpty ? "Payment Amount" : "Payment Amount"
+                        }
+                      />
                     </div>
                   </td>
-                  <td>
-                  <button type="button" className="button-add" onClick={submitPayment} >
-            <span className="button-add__text">Payment</span>
-            <span className="button-add__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" stroke="currentColor" height="24" fill="none" className="svg"><line y2="19" y1="5" x2="12" x1="12"></line><line y2="12" y1="12" x2="19" x1="5"></line></svg></span>
-              </button>
+                  <td colSpan={4}>
+                    <button
+                      type="button"
+                      className="button-add"
+                      onClick={submitPayment}>
+                      <span className="button-add__text">Payment</span>
+                      <span className="button-add__icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          stroke="currentColor"
+                          height="24"
+                          fill="none"
+                          className="svg"
+                        >
+                          <line y2="19" y1="5" x2="12" x1="12"></line>
+                          <line y2="12" y1="12" x2="19" x1="5"></line>
+                        </svg>
+                      </span>
+                    </button>
                   </td>
                 </tr>
                 <tr>
@@ -93,7 +111,10 @@ function ClientTable({
                     <td>{sale.sale_price}</td>
                     <td>{sale.sale_quantity * sale.sale_price}</td>
                     <td>
-                      <button className="delete-icon" onClick={() => handleDelete(sale._id)}></button>
+                      <button
+                        className="delete-icon"
+                        onClick={() => handleDelete(sale._id)}
+                      ></button>
                     </td>
                   </tr>
                 ))}
@@ -111,9 +132,6 @@ function ClientTable({
                   </td>
                   <td></td>
                 </tr>
-                <tr>
-                  <td></td>
-                </tr>
               </tbody>
             </table>
           )}
@@ -121,6 +139,6 @@ function ClientTable({
       )}
     </div>
   );
-}
+});
 
 export default ClientTable;

@@ -110,13 +110,50 @@ setClientData(clientData);
       }
     })
     .then(data => {
+      // Remove the sale from the salesData array
       fetchSalesData();
       fetchAvailableClients();
-      setSuggestions([]);
-      setSuggestionsSale([]);
+      
+      // Find the product associated with the deleted sale
+      const deletedSale = salesData.find(sale => sale._id === saleId);
+      const deletedProductName = deletedSale.sale_product_name.toLowerCase();
+  
+      // Find the corresponding product in the productData array
+      const productToUpdate = productData.find(product => product.product_name.toLowerCase() === deletedProductName);
+  
+      // Update the quantity of the product
+      if (productToUpdate) {
+        const newQuantity = productToUpdate.quantity + parseFloat(deletedSale.sale_quantity);
+        productToUpdate.quantity = newQuantity;
+        
+        // Send a PUT request to update the product's quantity
+        fetch(`/products/${productToUpdate._id}`, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productToUpdate)
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Error updating product quantity');
+          }
+        })
+        .then(updatedProduct => {
+          fetchProductData();
+          fetchAvailableProducts();
+          setSuggestions([]);
+          setSuggestionsSale([]);
+        })
+        .catch(error => console.error('Error updating product quantity:', error));
+      }
     })
     .catch(error => console.error('Error deleting sale:', error));
   };
+  
 
   const handleDelete = (productId) => {
     fetch(`/products/${productId}`, {
@@ -240,7 +277,7 @@ setClientData(clientData);
   const [saleQuantity, setSaleQuantity] = useState("");
   const [clientName, setClientName] = useState("");
   const [salePrice, setSalePrice] = useState("");
-  const [saleDate, setSaleDate] = useState("");
+  const [saleDate, setSaleDate] = useState(new Date());
 
   const [isSaleProductNameEmpty, setIsSaleProductNameEmpty] = useState(false);
   const [isSaleQuantityEmpty, setIsSaleQuantityEmpty] = useState(false);
@@ -372,12 +409,21 @@ setSuggestionsSale([]);
 setSaleProductName(suggestionA); 
 setProductName(suggestionA); 
 };
-
+const isMobile = window.matchMedia('(max-width: 767px)').matches;
 const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+    
   };
+
+ 
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [isMobile]);
+
 
 
   const [editingRowIndex, setEditingRowIndex] = useState(null);
@@ -508,11 +554,12 @@ const saleUpdate = (i) => {
 
     let validSale = true;
 
-    if (!updatedSaleData.sale_product_name) {
+      if (!updatedSaleData.sale_product_name) {
         setIsSaleProductNameEditEmpty(true);
         validSale = false;
-    }
-    if (!updatedSaleData.sale_quantity) {
+    } if (!productData.some(product => product.product_name.trim() === editedSaleData[i].sale_product_name.trim())) {
+      validSale = false;
+    } if (!updatedSaleData.sale_quantity) {
         setIsSaleQuantityEditEmpty(true);
         validSale = false;
     }
@@ -529,7 +576,6 @@ const saleUpdate = (i) => {
         validSale = false;
     }
     if (validSale) {
-      console.log("Updating sale data...");
         fetch(`/sale/${editedSaleData[i]._id}`, {
             method: "PUT",
             headers: {
@@ -625,7 +671,7 @@ function submitPayment() {
       <div className="app-container">
         <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className={`${sidebarOpen ? "section" : "section-extended"}`}>
-          <TopBar />
+          <TopBar toggleSidebar={toggleSidebar} />
           <div className="contentCenter">
             <Routes>
             <Route path="/" element={<Home salesData={salesData} productData={productData}/>} />

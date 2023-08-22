@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Home({ productData, salesData }) {
+const Home = React.memo(({ productData, salesData }) => {
   const [totalSales, setTotalSales] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [clientTotals, setClientTotals] = useState([]);
@@ -30,28 +30,30 @@ function Home({ productData, salesData }) {
     // Calculate client totals
     const clientTotalsMap = salesData.reduce((totalsMap, sale) => {
       const existingTotal = totalsMap[sale.client_name] || 0;
-      totalsMap[sale.client_name] = existingTotal + sale.sale_price * sale.sale_quantity;
+      totalsMap[sale.client_name] =
+        existingTotal + sale.sale_price * sale.sale_quantity;
       return totalsMap;
     }, {});
 
-    const updatedClientTotals = Object.keys(clientTotalsMap).map((clientName) => ({
-      client_name: clientName,
-      totalSales: clientTotalsMap[clientName],
-    }));
+    const updatedClientTotals = Object.keys(clientTotalsMap).map(
+      (clientName) => ({
+        client_name: clientName,
+        totalSales: clientTotalsMap[clientName],
+      })
+    );
     setClientTotals(updatedClientTotals);
   }, [productData, salesData]);
 
   return (
     <>
       <div className="home-page">
-      <div className="box-container">
+        <div className="box-container">
           <div className="box-text-container">
             <p className="box-text">Clients Total</p>
           </div>
           <div className="result-container">
             <table>
-              <thead>
-              </thead>
+              <thead></thead>
               <tbody>
                 {clientTotals.map((client, index) => (
                   <tr key={index}>
@@ -78,6 +80,6 @@ function Home({ productData, salesData }) {
       </div>
     </>
   );
-}
+});
 
 export default Home;
