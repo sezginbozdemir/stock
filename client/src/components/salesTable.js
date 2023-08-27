@@ -286,7 +286,6 @@ const SalesTable = React.memo(
                           onChange={(e) => saleEdit(e, i, "sale_product_name")}
                         />
                       </div>
-
                     ) : (
                       sale.sale_product_name
                     )}
@@ -355,8 +354,7 @@ const SalesTable = React.memo(
                       );
                       if (product) {
                         const profit =
-                          (sale.sale_price -
-                            product.base_price) *
+                          (sale.sale_price - product.base_price) *
                           sale.sale_quantity;
                         return profit.toFixed(2);
                       }
