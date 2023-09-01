@@ -11,12 +11,11 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 app.use(express.json());
 
-/* app.use('/api', apiRoutes); */
-
 app.use(cors());
 
+/* app.use('/api', apiRoutes); */
+
 app.post("/login", async (req, res) => {
-  console.log("Request body:", req.body);
   const { username, password } = req.body;
 
   try {
