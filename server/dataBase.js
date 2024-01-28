@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const userData = require("./userModel.js");
 
 mongoose
-  .connect("mongodb://localhost:27017/stock_app_db", {
+  .connect("mongodb+srv://bozdemirsezgin1:polyxena@cluster0.bgthz8p.mongodb.net/stock_app_db", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
